@@ -11,7 +11,6 @@ const WindowTracker = () => {
 
     window.addEventListener("resize", handleResize);
 
-    // Clean up the listener when component unmounts
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
