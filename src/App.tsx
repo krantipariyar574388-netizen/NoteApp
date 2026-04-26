@@ -3,6 +3,7 @@ import WindowTracker from "./components/WindowTracker";
 import UserList from './components/UserList';
 import PostList from './components/PostList';
 import PostForm from "./components/PostForm";
+import CreatePost from "./components/CreatePost";
 
 function App() {
   return (
@@ -17,9 +18,12 @@ function App() {
     </div> 
     <div className="min-h-screen bg-gray-50 py-10">
       <PostList />
-    </div> */}
+    </div> 
     <div className="App">
       <PostForm />
+    </div> */}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <CreatePost />
     </div>
         </main>
       </div>
