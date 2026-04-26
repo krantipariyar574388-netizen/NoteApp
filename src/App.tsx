@@ -2,6 +2,7 @@ import React from 'react';
 import WindowTracker from "./components/WindowTracker";
 import UserList from './components/UserList';
 import PostList from './components/PostList';
+import PostForm from "./components/PostForm";
 
 function App() {
   return (
@@ -13,10 +14,13 @@ function App() {
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
       <WindowTracker />
       <UserList />
-    </div> */}
+    </div> 
     <div className="min-h-screen bg-gray-50 py-10">
       <PostList />
-    </div> 
+    </div> */}
+    <div className="App">
+      <PostForm />
+    </div>
         </main>
       </div>
     </div>
