@@ -21,7 +21,7 @@ const CounterApp = () => {
             + Increment
           </button>
           <button 
-            onClick={() => setCount(count - 1)}
+            onClick={() => setCount(count > 0 ? count - 1 : 0 )}
             className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-lg font-bold shadow-md hover:shadow-lg transform active:scale-95 transition"
           >
             - Decrement
