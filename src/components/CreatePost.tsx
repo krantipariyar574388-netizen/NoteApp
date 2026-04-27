@@ -1,86 +1,167 @@
 import React, { useState } from 'react';
 
-interface NewPost {
-  title: string;
-  userId: number;
-}
+const CreatePost = () => {
+  const [title, setTitle] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
-const CreatePost: React.FC = () => {
-  const [postTitle, setPostTitle] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-
-  const handlePostSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setStatusMsg(null);
+    setLoading(true);
+    setMessage('');
 
     try {
       const response = await fetch('https://dummyjson.com/posts/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: postTitle,
+          title: title,
           userId: 1, 
-        } as NewPost),
+        }),
       });
 
-      const result = await response.json();
-
+      const data = await response.json();
+      
       if (response.ok) {
-        console.log('API Response Success:', result);
-        setStatusMsg({ type: 'success', text: `Success! Post created with ID: ${result.id}` });
-        setPostTitle(''); 
+        setMessage('✅ Post created successfully!');
+        setTitle(''); 
       } else {
-        throw new Error('Failed to create post');
+        setMessage('❌ Something went wrong.');
       }
-    } catch (err) {
-        console.error('API Error:', err);
-      setStatusMsg({ type: 'error', text: 'Something went wrong. Please try again.' });
+    } catch (error) {
+      setMessage('⚠️ Network error. Try again.');
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-8 bg-white shadow-lg rounded-2xl border border-gray-100">
-      <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">Add New Post</h2>
-      
-      <form onSubmit={handlePostSubmit} className="flex flex-col gap-4">
-        <div>
-          <label className="text-sm font-semibold text-gray-600 mb-1 block">Title</label>
-          <input
-            type="text"
-            placeholder="Write something interesting..."
-            value={postTitle}
-            onChange={(e) => setPostTitle(e.target.value)}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-          />
-        </div>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Create New Post</h2>
+        <p style={styles.subtitle}>Share your thoughts with the world</p>
+        
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Post Title</label>
+            <input
+              type="text"
+              placeholder="What's on your mind?"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={loading}
+              style={styles.input}
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-3 rounded-lg font-medium text-white transition-all ${
-            isSubmitting 
-              ? 'bg-indigo-300 cursor-not-allowed' 
-              : 'bg-indigo-600 hover:bg-indigo-700 active:scale-95'
-          }`}
-        >
-          {isSubmitting ? 'Posting...' : 'Create Post'}
-        </button>
-      </form>
+          <button 
+            type="submit" 
+            disabled={loading} 
+            style={{ 
+              ...styles.button, 
+              backgroundColor: loading ? '#a0aec0' : '#4a90e2',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? (
+              <span style={styles.loaderText}>Submitting...</span>
+            ) : 'Publish Post'}
+          </button>
+        </form>
 
-      {statusMsg && (
-        <div className={`mt-6 p-3 rounded-lg text-sm text-center font-medium ${
-          statusMsg.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
-          {statusMsg.text}
-        </div>
-      )}
+        {message && (
+          <div style={{
+            ...styles.alert,
+            backgroundColor: message.includes('✅') ? '#f0fff4' : '#fff5f5',
+            color: message.includes('✅') ? '#2f855a' : '#c53030',
+            borderColor: message.includes('✅') ? '#c6f6d5' : '#fed7d7'
+          }}>
+            {message}
+          </div>
+        )}
+      </div>
     </div>
   );
+};
+
+// CSS in JS Styles
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    backgroundColor: '#f7fafc',
+    fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+    width: '100%',
+    maxWidth: '450px',
+  },
+  title: {
+    margin: '0 0 8px 0',
+    fontSize: '24px',
+    color: '#2d3748',
+    textAlign: 'center',
+  },
+  subtitle: {
+    margin: '0 0 24px 0',
+    fontSize: '14px',
+    color: '#718096',
+    textAlign: 'center',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  inputGroup: {
+    marginBottom: '20px',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#4a5568',
+  },
+  input: {
+    width: '100%',
+    padding: '12px',
+    borderRadius: '8px',
+    border: '1px solid #e2e8f0',
+    fontSize: '16px',
+    boxSizing: 'border-box',
+    outline: 'none',
+    transition: 'border-color 0.2s',
+  },
+  button: {
+    padding: '12px',
+    borderRadius: '8px',
+    border: 'none',
+    color: 'white',
+    fontSize: '16px',
+    fontWeight: '600',
+    transition: 'all 0.3s ease',
+  },
+  loaderText: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+  },
+  alert: {
+    marginTop: '20px',
+    padding: '12px',
+    borderRadius: '8px',
+    border: '1px solid',
+    textAlign: 'center',
+    fontSize: '14px',
+  }
 };
 
 export default CreatePost;
